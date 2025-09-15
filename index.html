@@ -1,3 +1,4 @@
+ㅤ, [16.09.2025 1:30]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -19,16 +20,32 @@
     th,td{border:1px solid #e7e9f0;padding:8px;text-align:left}
     th{background:#f2f4fa}
     .btn{display:inline-block;margin-top:14px;padding:12px 18px;border:0;border-radius:10px;background:#ffcc00;cursor:pointer;font-weight:700}
-    .ok{background:#e7fff1;color:#0a8f4a;border:1px solid #bff0d6;padding:12px 14px;border-radius:10px;margin:10px 0}
-    .err{background:#ffecec;color:#a40000;border:1px solid #f3b3b3;padding:12px 14px;border-radius:10px;margin:10px 0}
+    .btn[disabled]{opacity:.6;cursor:wait}
+    .note{margin-bottom:12px}
+    .ok{background:#e7fff1;color:#0a8f4a;border:1px solid #bff0d6;padding:12px 14px;border-radius:10px}
+    .err{background:#ffecec;color:#a40000;border:1px solid #f3b3b3;padding:12px 14px;border-radius:10px}
+    .center{display:flex;align-items:center;justify-content:center;min-height:200px;text-align:center}
+    .hidden{display:none!important}
     small.hint{display:block;color:#6d7285}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Анкета кандидата на должность администратора</h1>
-    <div id="msg"></div>
 
+    <!-- Сообщения -->
+    <div id="msg" class="note"></div>
+
+    <!-- Экран успеха -->
+    <div id="success" class="hidden center">
+      <div>
+        <h2 style="margin:0 0 8px">✅ Спасибо!</h2>
+        <p style="margin:0 0 12px">Анкета успешно отправлена. Мы свяжемся с вами.</p>
+        <button class="btn" onclick="window.location.reload()">Заполнить ещё одну анкету</button>
+      </div>
+    </div>
+
+    <!-- Форма -->
     <form id="appForm" enctype="multipart/form-data">
       <label>1. ФИО
         <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
@@ -74,7 +91,9 @@
       </label>
 
       <label>10. Опыт работы (место, должность, обязанности)
-        <textarea name="experience" rows="3" placeholder="Где/когда работали, обязанности"></textarea>
+
+ㅤ, [16.09.2025 1:30]
+<textarea name="experience" rows="3" placeholder="Где/когда работали, обязанности"></textarea>
       </label>
 
       <label>11. Навыки
@@ -99,15 +118,14 @@
         <small class="hint">JPG/PNG/WEBP до ~10 МБ.</small>
       </label>
 
-      <button class="btn" type="submit">Отправить заявку</button>
+      <button id="sendBtn" class="btn" type="submit">Отправить заявку</button>
     </form>
   </div>
 
   <script>
-    // генерим строки для дней
+    // генерим дни недели
     const days = [["mon","Пн"],["tue","Вт"],["wed","Ср"],["thu","Чт"],["fri","Пт"],["sat","Сб"],["sun","Вс"]];
-    const tbody = document.getElementById('days-body');
-    tbody.innerHTML = days.map(([k,t]) => `
+    document.getElementById('days-body').innerHTML = days.map(([k,t]) => `
       <tr>
         <td>${t}</td>
         <td>
@@ -135,14 +153,16 @@
     }
     dob.addEventListener('change', calcAge);
 
-    // отправка формы в Netlify Function
+    // отправка
     const form = document.getElementById('appForm');
     const msg  = document.getElementById('msg');
+    const okScreen = document.getElementById('success');
+    const btn = document.getElementById('sendBtn');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // Проверка причин
+      // требуем причину если выбран статус
       for (const [k,t] of days){
         const st = document.getElementById(k+"_status").value;
         const rs = document.getElementById(k+"_reason").value.trim();
@@ -153,20 +173,29 @@
       }
 
       const fd = new FormData(form);
-      let res, data;
+      btn.disabled = true;
+      const oldText = btn.textContent;
+      btn.textContent = 'Отправка…';
+      msg.innerHTML = '';
+
       try{
-        res = await fetch('/.netlify/functions/submit', { method: 'POST', body: fd });
-        try { data = await res.json(); } catch { data = {}; }
+        const res = await fetch('/.netlify/functions/submit', { method: 'POST', body: fd });
+        let data = {};
+        try { data = await res.json(); } catch {}
+        if (res.ok && data.ok){
+          // чистый экран «спасибо»
+          form.classList.add('hidden');
+          okScreen.classList.remove('hidden');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }else{
+          const reason = data.error || ${res.status} ${res.statusText};
+          msg.innerHTML = <div class="err">Ошибка: ${reason}</div>;
+        }
       }catch{
         msg.innerHTML = '<div class="err">Сеть недоступна. Повторите попытку.</div>';
-        return;
-      }
-
-      if (res.ok && data.ok){
-        msg.innerHTML = '<div class="ok">Спасибо! Анкета отправлена.</div>';
-        form.reset(); ageOut.value = '';
-      }else{
-        msg.innerHTML = '<div class="err">Ошибка: ' + (data.error || (res.status+' '+res.statusText)) + '</div>';
+      }finally{
+        btn.disabled = false;
+        btn.textContent = oldText;
       }
     });
   </script>
