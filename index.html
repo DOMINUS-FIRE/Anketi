@@ -1,18 +1,197 @@
+ㅤ, [16.09.2025 2:02]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <title>LEGO CITY — VERSION v9</title>
+  <meta charset="UTF-8">
+  <title>ЛЕГО СИТИ — Анкета кандидата</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>body{font-family:Arial,sans-serif;padding:24px} .tag{padding:10px;border:2px dashed #f39c12;display:inline-block}</style>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f6f7fb;margin:0;padding:24px}
+    .wrap{max-width:860px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:22px}
+    h1{margin:6px 0 18px;font-size:22px;text-align:center}
+    label{display:block;margin:10px 0;font-weight:600}
+    input,textarea,select{width:100%;margin-top:6px;padding:10px 12px;border:1px solid #d9dbe5;border-radius:10px;background:#fafbff;font-size:15px;box-sizing:border-box}
+    input:focus,textarea:focus,select:focus{outline:none;border-color:#6a7cff;background:#fff}
+    textarea{resize:none;height:70px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:720px){.row{grid-template-columns:1fr}}
+    fieldset{border:1px solid #e7e9f0;border-radius:10px;padding:12px;margin-top:14px;background:#fafbff}
+    legend{font-weight:700;padding:0 6px}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{border:1px solid #e7e9f0;padding:8px;text-align:left;vertical-align:top}
+    th{background:#f2f4fa}
+    .btn{display:inline-block;margin-top:14px;padding:12px 18px;border:0;border-radius:10px;background:#ffcc00;cursor:pointer;font-weight:700}
+    .btn[disabled]{opacity:.6;cursor:wait}
+    .note{margin-bottom:12px}
+    .ok{background:#e7fff1;color:#0a8f4a;border:1px solid #bff0d6;padding:12px 14px;border-radius:10px}
+    .err{background:#ffecec;color:#a40000;border:1px solid #f3b3b3;padding:12px 14px;border-radius:10px;white-space:pre-line}
+    .center{display:flex;align-items:center;justify-content:center;min-height:200px;text-align:center}
+    .hidden{display:none!important}
+    small.hint{display:block;color:#6d7285}
+    .tag{margin:0 0 8px;color:#888;font-size:12px;text-align:center}
+  </style>
 </head>
 <body>
-  <h1 class="tag">VERSION v9 • если ты это видишь, Новый index.html реально загружается</h1>
-  <p>Сейчас нажмётся alert. Если его нет — сайт отдаёт старую версию или не тот каталог.</p>
+  <div class="wrap">
+    <div class="tag">BUILD v10</div>
+    <h1>Анкета кандидата на должность администратора</h1>
+
+    <div id="msg" class="note"></div>
+
+    <div id="success" class="hidden center">
+      <div>
+        <h2 style="margin:0 0 8px">✅ Спасибо!</h2>
+        <p style="margin:0 0 12px">Анкета успешно отправлена. Мы свяжемся с вами.</p>
+        <button class="btn" onclick="window.location.reload()">Заполнить ещё одну анкету</button>
+      </div>
+    </div>
+
+    <form id="appForm" enctype="multipart/form-data" novalidate>
+      <label>1. ФИО
+        <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
+      </label>
+
+      <div class="row">
+        <label>2. Дата рождения
+          <input type="text" name="dob_date" id="dob" placeholder="ДД.ММ.ГГГГ или 1994-11-18" required>
+          <small class="hint">Возраст посчитается автоматически (и на сервере тоже).</small>
+        </label>
+        <label>Возраст
+          <input type="text" id="age_display" readonly placeholder="—">
+        </label>
+      </div>
+
+      <label>3. Контактный телефон
+        <input type="tel" name="phone" required placeholder="+7 999 123-45-67">
+      </label>
+
+      <label>4. Ваш Telegram
+        <input type="text" name="telegram" placeholder="@username">
+      </label>
+
+      <label>5. Адрес проживания (фактический)
+        <input type="text" name="address" placeholder="Город, улица, дом">
+        <small class="hint">Где живёте сейчас (не из паспорта).</small>
+      </label>
+
+      <label>6. Адрес прописки (как в паспорте)
+        <input type="text" name="passport_registration" required placeholder="Регион, город, улица, дом, кв. — как в паспорте">
+      </label>
+
+      <label>7. Серия и номер паспорта
+        <input type="text" name="passport_number" required placeholder="1234 567890">
+      </label>
+
+      <label>8. Кем выдан паспорт
+        <input type="text" name="passport_issuer" required placeholder="УФМС России по ...">
+      </label>
+
+      <label>9. Образование
+
+ㅤ, [16.09.2025 2:02]
+<input type="text" name="education" placeholder="Учебное заведение, специальность">
+      </label>
+
+      <label>10. Опыт работы (место, должность, обязанности)
+        <textarea name="experience" placeholder="Где/когда работали, обязанности"></textarea>
+      </label>
+
+      <label>11. Навыки
+        <textarea name="skills" placeholder="Клиенты, касса, организация и т.п."></textarea>
+      </label>
+
+      <label>12. Почему хотите работать у нас?
+        <textarea name="why_us" placeholder="Коротко о мотивации"></textarea>
+      </label>
+
+      <fieldset>
+        <legend>13. Удобный график работы (по дням недели)</legend>
+        <table>
+          <thead><tr><th>День</th><th>Статус</th><th>Часы (если сможет)</th><th>Причина</th></tr></thead>
+          <tbody>
+            <tr><td>Пн</td><td><select name="mon_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="mon_hours" placeholder="10:00-18:00"></td><td><input name="mon_reason" placeholder="Причина обязательна"></td></tr>
+            <tr><td>Вт</td><td><select name="tue_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="tue_hours"></td><td><input name="tue_reason"></td></tr>
+            <tr><td>Ср</td><td><select name="wed_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="wed_hours"></td><td><input name="wed_reason"></td></tr>
+            <tr><td>Чт</td><td><select name="thu_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="thu_hours"></td><td><input name="thu_reason"></td></tr>
+            <tr><td>Пт</td><td><select name="fri_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="fri_hours"></td><td><input name="fri_reason"></td></tr>
+            <tr><td>Сб</td><td><select name="sat_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="sat_hours"></td><td><input name="sat_reason"></td></tr>
+            <tr><td>Вс</td><td><select name="sun_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="sun_hours"></td><td><input name="sun_reason"></td></tr>
+          </tbody>
+        </table>
+        <small class="hint">Пример: Пн — сможет 10:00-15:00 (причина: учёба после 15:00); Вт — не сможет (причина: экзамен).</small>
+      </fieldset>
+
+      <label>14. Фото (обязательно)
+        <input type="file" name="photo" accept="image/*" required>
+        <small class="hint">JPG/PNG/WEBP до ~10 МБ.</small>
+      </label>
+
+      <button id="sendBtn" class="btn" type="button">Отправить заявку</button>
+    </form>
+  </div>
 
   <script>
-    alert('JS загружен — v9');
-    console.log('Hello from v9');
+    // метка сборки в консоль, чтобы видеть, что именно эта версия загружена
+    console.log('BUILD v10 loaded');
+
+    // Подсчёт возраста (поддержка 1994-11-18, 18.11.1994, 18/11/1994)
+    (function(){
+      var dob = document.getElementById('dob');
+      var out = document.getElementById('age_display');
+
+      function parseDate(v){
+        if (!v) return null;
+        v = v.trim();
+        var m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+        m = v.match(/^(\d{2})[.\/-](\d{2})[.\/-](\d{4})$/);
+        if (m) return new Date(+m[3], +m[2]-1, +m[1]);
+        return null;
+      }
+
+      function calcAge(){
+        var d = parseDate(dob.value);
+        if (!d) { out.value=''; return; }
+        var t = new Date();
+        var age = t.getFullYear() - d.getFullYear();
+        var mm  = t.getMonth() - d.getMonth();
+        if (mm < 0 || (mm === 0 && t.getDate() < d.getDate())) age--;
+        out.value = isFinite(age) ? (age + ' лет') : '';
+      }
+      ['input','change','blur'].
+
+ㅤ, [16.09.2025 2:02]
+forEach(function(ev){ dob.addEventListener(ev, calcAge); });
+      if (dob.value) calcAge();
+    })();
+
+    // Отправка формы через Netlify Function
+    (function(){
+      var form = document.getElementById('appForm');
+      var ok   = document.getElementById('success');
+      var msg  = document.getElementById('msg');
+      var btn  = document.getElementById('sendBtn');
+
+      function showErr(t){ msg.innerHTML = '<div class="err">'+ String(t).replace(/</g,'&lt;') +'</div>'; }
+
+      btn.addEventListener('click', function(){
+        var fd = new FormData(form);
+        btn.disabled = true;
+        var old = btn.textContent; btn.textContent = 'Отправка...'; msg.innerHTML='';
+
+        fetch('/.netlify/functions/submit', { method:'POST', body: fd })
+          .then(function(res){ return res.text().then(function(t){ try{return{res:res,data:JSON.parse(t)}}catch(_){return{res:res,raw:t}};}); })
+          .then(function(x){
+            if (x.res.ok && x.data && x.data.ok){
+              form.classList.add('hidden'); ok.classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'});
+            } else {
+              showErr((x.data && x.data.error)  x.raw  (x.res.status + ' ' + x.res.statusText));
+            }
+          })
+          .catch(function(){ showErr('Сеть недоступна. Повторите попытку.'); })
+          .finally(function(){ btn.disabled=false; btn.textContent=old; });
+      });
+    })();
   </script>
 </body>
 </html>
