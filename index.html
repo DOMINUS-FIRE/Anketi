@@ -1,92 +1,170 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Анкета кандидата</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>ЛЕГО СИТИ — Анкета кандидата</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: Arial, sans-serif; background:#f6f7fb; margin:0; padding:20px; }
-    .container { max-width:800px; margin:auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-    h1 { text-align:center; }
-    label { display:block; margin:12px 0; font-weight:bold; }
-    input, textarea { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:6px; }
-    button { display:block; margin:20px auto; padding:12px 30px; font-size:16px; background:#0078d7; color:white; border:none; border-radius:6px; cursor:pointer; }
-    button:hover { background:#005a9e; }
-    .ok { background:#e7fff1; padding:10px; border:1px solid #bff0d6; border-radius:6px; color:#0a8f4a; margin-bottom:10px; }
-    .err { background:#ffecec; padding:10px; border:1px solid #f3b3b3; border-radius:6px; color:#a40000; margin-bottom:10px; }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f6f7fb;margin:0;padding:24px;}
+    .wrap{max-width:860px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:22px}
+    h1{margin:6px 0 18px;font-size:22px;text-align:center}
+    label{display:block;margin:10px 0;font-weight:600}
+    input,textarea,select{width:100%;margin-top:6px;padding:10px 12px;border:1px solid #d9dbe5;border-radius:10px;background:#fafbff;font-size:15px}
+    input:focus,textarea:focus,select:focus{outline:none;border-color:#6a7cff;background:#fff}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:720px){.row{grid-template-columns:1fr}}
+    fieldset{border:1px solid #e7e9f0;border-radius:10px;padding:12px;margin-top:14px;background:#fafbff}
+    legend{font-weight:700;padding:0 6px}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{border:1px solid #e7e9f0;padding:8px;text-align:left}
+    th{background:#f2f4fa}
+    .btn{display:inline-block;margin-top:14px;padding:12px 18px;border:0;border-radius:10px;background:#ffcc00;cursor:pointer;font-weight:700}
+    .ok{background:#e7fff1;color:#0a8f4a;border:1px solid #bff0d6;padding:12px 14px;border-radius:10px;margin:10px 0}
+    .err{background:#ffecec;color:#a40000;border:1px solid #f3b3b3;padding:12px 14px;border-radius:10px;margin:10px 0}
+    small.hint{display:block;color:#6d7285}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Анкета кандидата</h1>
+  <div class="wrap">
+    <h1>Анкета кандидата на должность администратора</h1>
     <div id="msg"></div>
-    <form id="form">
-      <label>ФИО:
-        <input type="text" name="full_name" required>
+
+    <form id="appForm" enctype="multipart/form-data">
+      <label>1. ФИО
+        <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
       </label>
-      <label>Дата рождения:
-        <input type="date" name="dob_date" required>
+
+      <div class="row">
+        <label>2. Дата рождения
+          <input type="date" name="dob_date" id="dob" required>
+          <small class="hint">Возраст посчитается автоматически (и на сервере тоже).</small>
+        </label>
+        <label>Возраст
+          <input type="text" id="age_display" readonly placeholder="—">
+        </label>
+      </div>
+
+      <label>3. Контактный телефон
+        <input type="tel" name="phone" required placeholder="+7 999 123-45-67">
       </label>
-      <label>Телефон:
-        <input type="tel" name="phone" required>
+
+      <label>4. Ваш Telegram
+        <input type="text" name="telegram" placeholder="@username">
       </label>
-      <label>Telegram:
-        <input type="text" name="telegram">
+
+      <label>5. Адрес проживания (фактический)
+        <input type="text" name="address" placeholder="Город, улица, дом">
+        <small class="hint">Где живёте сейчас (не из паспорта).</small>
       </label>
-      <label>Адрес проживания:
-        <input type="text" name="address">
+
+      <label>6. Адрес прописки (как в паспорте)
+        <input type="text" name="passport_registration" required placeholder="Регион, город, улица, дом, кв. — как в паспорте">
       </label>
-      <label>Опыт работы:
-        <textarea name="experience"></textarea>
+
+      <label>7. Серия и номер паспорта
+        <input type="text" name="passport_number" required placeholder="1234 567890">
       </label>
-      <label>Почему хотите работать у нас?
-        <textarea name="why_us"></textarea>
+
+      <label>8. Кем выдан паспорт
+        <input type="text" name="passport_issuer" required placeholder="УФМС России по ...">
       </label>
-      <button type="submit">Отправить</button>
+
+      <label>9. Образование
+        <input type="text" name="education" placeholder="Учебное заведение, специальность">
+      </label>
+
+      <label>10. Опыт работы (место, должность, обязанности)
+        <textarea name="experience" rows="3" placeholder="Где/когда работали, обязанности"></textarea>
+      </label>
+
+      <label>11. Навыки
+        <textarea name="skills" rows="2" placeholder="Клиенты, касса, организация и т.п."></textarea>
+      </label>
+
+      <label>12. Почему хотите работать у нас?
+        <textarea name="why_us" rows="2" placeholder="Коротко о мотивации"></textarea>
+      </label>
+
+      <fieldset>
+        <legend>13. Удобный график работы (по дням недели)</legend>
+        <table>
+          <thead><tr><th>День</th><th>Статус</th><th>Часы (если сможет)</th><th>Причина</th></tr></thead>
+          <tbody id="days-body"></tbody>
+        </table>
+        <small class="hint">Пример: Пн — сможет 10–15 (причина: учёба после 15:00); Вт — не сможет (причина: экзамен).</small>
+      </fieldset>
+
+      <label>14. Фото (обязательно)
+        <input type="file" name="photo" accept="image/*" required>
+        <small class="hint">JPG/PNG/WEBP до ~10 МБ.</small>
+      </label>
+
+      <button class="btn" type="submit">Отправить заявку</button>
     </form>
   </div>
 
   <script>
-    // ДАННЫЕ ТВОЕГО БОТА
-    const BOT_TOKEN = "8346524640:AAGaIPztb-3k25j0mWJm4w-g0SxHiQ-1fg0";
-    const CHAT_ID   = "@LegoCity43"; // можно заменить на числовой id
+    // генерим строки для дней
+    const days = [["mon","Пн"],["tue","Вт"],["wed","Ср"],["thu","Чт"],["fri","Пт"],["sat","Сб"],["sun","Вс"]];
+    const tbody = document.getElementById('days-body');
+    tbody.innerHTML = days.map(([k,t]) => `
+      <tr>
+        <td>${t}</td>
+        <td>
+          <select name="${k}_status" id="${k}_status" required>
+            <option value="">—</option>
+            <option value="can">Сможет</option>
+            <option value="cant">Не сможет</option>
+          </select>
+        </td>
+        <td><input type="text" name="${k}_hours" placeholder="Напр.: 10:00–18:00"></td>
+        <td><input type="text" name="${k}_reason" id="${k}_reason" required placeholder="Причина обязательна"></td>
+      </tr>
+    `).join("");
 
-    const form = document.getElementById('form');
+    // возраст
+    const dob = document.getElementById('dob');
+    const ageOut = document.getElementById('age_display');
+    function calcAge(){
+      if(!dob.value){ ageOut.value=''; return; }
+      const d = new Date(dob.value), t = new Date();
+      let age = t.getFullYear() - d.getFullYear();
+      const m = t.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
+      ageOut.value = isFinite(age) ? age + ' лет' : '';
+    }
+    dob.addEventListener('change', calcAge);
+
+    // сабмит в серверную функцию Netlify
+    const form = document.getElementById('appForm');
     const msg  = document.getElementById('msg');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const data = new FormData(form);
-      const text =
-        "<b>Новая анкета</b>\n" +
-        "👤 ФИО: " + data.get('full_name') + "\n" +
-        "🎂 Дата рождения: " + data.get('dob_date') + "\n" +
-        "📞 Телефон: " + data.get('phone') + "\n" +
-        "✈️ Telegram: @" + data.get('telegram') + "\n" +
-        "🏠 Адрес: " + data.get('address') + "\n" +
-        "💼 Опыт:\n" + data.get('experience') + "\n\n" +
-        "❓ Почему к нам:\n" + data.get('why_us');
-
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: text,
-            parse_mode: "HTML"
-          })
-        });
-        const result = await res.json();
-        if (result.ok) {
-          msg.innerHTML = '<div class="ok">Анкета успешно отправлена!</div>';
-          form.reset();
-        } else {
-          msg.innerHTML = '<div class="err">Ошибка отправки: ' + result.description + '</div>';
+      // проверка причин, если статус выбран
+      for (const [k,t] of days){
+        const st = document.getElementById(k+"_status").value;
+        const rs = document.getElementById(k+"_reason").value.trim();
+        if (st && !rs){
+          alert(`Укажите причину для дня ${t}.`);
+          return;
         }
-      } catch (err) {
-        msg.innerHTML = '<div class="err">Ошибка соединения</div>';
+      }
+
+      const fd = new FormData(form);
+      try{
+        const res = await fetch('/.netlify/functions/submit', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (res.ok && data.ok){
+          msg.innerHTML = '<div class="ok">Спасибо! Анкета отправлена.</div>';
+          form.reset();
+          ageOut.value = '';
+        }else{
+          msg.innerHTML = '<div class="err">Ошибка: ' + (data.error || 'не удалось отправить') + '</div>';
+        }
+      }catch(err){
+        msg.innerHTML = '<div class="err">Сеть недоступна. Повторите попытку.</div>';
       }
     });
   </script>
