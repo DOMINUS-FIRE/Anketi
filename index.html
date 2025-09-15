@@ -1,4 +1,4 @@
-ㅤ, [16.09.2025 2:02]
+ㅤ, [16.09.2025 2:10]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -33,7 +33,7 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="tag">BUILD v10</div>
+    <div class="tag">BUILD v11</div>
     <h1>Анкета кандидата на должность администратора</h1>
 
     <div id="msg" class="note"></div>
@@ -46,6 +46,7 @@
       </div>
     </div>
 
+    <!-- ЕДИНСТВЕННАЯ форма -->
     <form id="appForm" enctype="multipart/form-data" novalidate>
       <label>1. ФИО
         <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
@@ -53,7 +54,7 @@
 
       <div class="row">
         <label>2. Дата рождения
-          <input type="text" name="dob_date" id="dob" placeholder="ДД.ММ.ГГГГ или 1994-11-18" required>
+          <input type="date" name="dob_date" id="dob" required>
           <small class="hint">Возраст посчитается автоматически (и на сервере тоже).</small>
         </label>
         <label>Возраст
@@ -88,7 +89,7 @@
 
       <label>9. Образование
 
-ㅤ, [16.09.2025 2:02]
+ㅤ, [16.09.2025 2:10]
 <input type="text" name="education" placeholder="Учебное заведение, специальность">
       </label>
 
@@ -109,13 +110,13 @@
         <table>
           <thead><tr><th>День</th><th>Статус</th><th>Часы (если сможет)</th><th>Причина</th></tr></thead>
           <tbody>
-            <tr><td>Пн</td><td><select name="mon_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="mon_hours" placeholder="10:00-18:00"></td><td><input name="mon_reason" placeholder="Причина обязательна"></td></tr>
-            <tr><td>Вт</td><td><select name="tue_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="tue_hours"></td><td><input name="tue_reason"></td></tr>
-            <tr><td>Ср</td><td><select name="wed_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="wed_hours"></td><td><input name="wed_reason"></td></tr>
-            <tr><td>Чт</td><td><select name="thu_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="thu_hours"></td><td><input name="thu_reason"></td></tr>
-            <tr><td>Пт</td><td><select name="fri_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="fri_hours"></td><td><input name="fri_reason"></td></tr>
-            <tr><td>Сб</td><td><select name="sat_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="sat_hours"></td><td><input name="sat_reason"></td></tr>
-            <tr><td>Вс</td><td><select name="sun_status"><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="sun_hours"></td><td><input name="sun_reason"></td></tr>
+            <tr><td>Пн</td><td><select name="mon_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="mon_hours" placeholder="10:00-18:00"></td><td><input name="mon_reason" placeholder="Причина обязательна"></td></tr>
+            <tr><td>Вт</td><td><select name="tue_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="tue_hours"></td><td><input name="tue_reason"></td></tr>
+            <tr><td>Ср</td><td><select name="wed_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="wed_hours"></td><td><input name="wed_reason"></td></tr>
+            <tr><td>Чт</td><td><select name="thu_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="thu_hours"></td><td><input name="thu_reason"></td></tr>
+            <tr><td>Пт</td><td><select name="fri_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="fri_hours"></td><td><input name="fri_reason"></td></tr>
+            <tr><td>Сб</td><td><select name="sat_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="sat_hours"></td><td><input name="sat_reason"></td></tr>
+            <tr><td>Вс</td><td><select name="sun_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input name="sun_hours"></td><td><input name="sun_reason"></td></tr>
           </tbody>
         </table>
         <small class="hint">Пример: Пн — сможет 10:00-15:00 (причина: учёба после 15:00); Вт — не сможет (причина: экзамен).</small>
@@ -126,46 +127,49 @@
         <small class="hint">JPG/PNG/WEBP до ~10 МБ.</small>
       </label>
 
+      <!-- type="button": форма не уйдёт без JS -->
       <button id="sendBtn" class="btn" type="button">Отправить заявку</button>
     </form>
   </div>
 
   <script>
-    // метка сборки в консоль, чтобы видеть, что именно эта версия загружена
-    console.log('BUILD v10 loaded');
+    console.log('BUILD v11 loaded');
 
-    // Подсчёт возраста (поддержка 1994-11-18, 18.11.1994, 18/11/1994)
+    // === Подсчёт возраста для <input type="date"> ===
     (function(){
       var dob = document.getElementById('dob');
       var out = document.getElementById('age_display');
 
-      function parseDate(v){
-        if (!v) return null;
-        v = v.trim();
-        var m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      function parseDateFromInput(el){
+        if ('valueAsDate' in el && el.valueAsDate instanceof Date && !isNaN(el.valueAsDate)) {
+          var d = el.valueAsDate;
+          return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        }
+        var v = (el.value || '').trim();
+        var m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/); // ISO
         if (m) return new Date(+m[1], +m[2]-1, +m[3]);
-        m = v.match(/^(\d{2})[.\/-](\d{2})[.\/-](\d{4})$/);
+        m = v.match(/^(\d{2})[.\/-](\d{2})[.\/-](\d{4})$/); // 18.11.1994 / 18/11/1994
         if (m) return new Date(+m[3], +m[2]-1, +m[1]);
         return null;
       }
 
       function calcAge(){
-        var d = parseDate(dob.value);
-        if (!d) { out.value=''; return; }
-        var t = new Date();
+        var d = parseDateFromInput(dob);
+        if (!d || isNaN(d.getTime())) { out.value = ''; return; }
+
+ㅤ, [16.09.2025 2:10]
+var t = new Date();
         var age = t.getFullYear() - d.getFullYear();
-        var mm  = t.getMonth() - d.getMonth();
-        if (mm < 0 || (mm === 0 && t.getDate() < d.getDate())) age--;
+        var m  = t.getMonth() - d.getMonth();
+        if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
         out.value = isFinite(age) ? (age + ' лет') : '';
       }
-      ['input','change','blur'].
 
-ㅤ, [16.09.2025 2:02]
-forEach(function(ev){ dob.addEventListener(ev, calcAge); });
-      if (dob.value) calcAge();
+      ['input','change','blur'].forEach(function(ev){ dob.addEventListener(ev, calcAge); });
+      if (dob.value) calcAge(); // если подставилось автозаполнением
     })();
 
-    // Отправка формы через Netlify Function
+    // === Отправка формы через Netlify Function ===
     (function(){
       var form = document.getElementById('appForm');
       var ok   = document.getElementById('success');
@@ -175,6 +179,15 @@ forEach(function(ev){ dob.addEventListener(ev, calcAge); });
       function showErr(t){ msg.innerHTML = '<div class="err">'+ String(t).replace(/</g,'&lt;') +'</div>'; }
 
       btn.addEventListener('click', function(){
+        // простая клиентская проверка причин при указании статуса
+        var dayNames = ['mon','tue','wed','thu','fri','sat','sun'];
+        for (var i=0;i<dayNames.length;i++){
+          var k = dayNames[i];
+          var st = form.elements[k+'_status'].value || '';
+          var rs = (form.elements[k+'_reason'].value || '').trim();
+          if (st && !rs) { alert('Укажите причину для дня: ' + k.toUpperCase()); return; }
+        }
+
         var fd = new FormData(form);
         btn.disabled = true;
         var old = btn.textContent; btn.textContent = 'Отправка...'; msg.innerHTML='';
