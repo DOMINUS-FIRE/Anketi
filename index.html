@@ -1,4 +1,4 @@
-ㅤ, [16.09.2025 1:30]
+ㅤ, [16.09.2025 1:38]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -17,13 +17,13 @@
     fieldset{border:1px solid #e7e9f0;border-radius:10px;padding:12px;margin-top:14px;background:#fafbff}
     legend{font-weight:700;padding:0 6px}
     table{width:100%;border-collapse:collapse;margin-top:8px}
-    th,td{border:1px solid #e7e9f0;padding:8px;text-align:left}
+    th,td{border:1px solid #e7e9f0;padding:8px;text-align:left;vertical-align:top}
     th{background:#f2f4fa}
     .btn{display:inline-block;margin-top:14px;padding:12px 18px;border:0;border-radius:10px;background:#ffcc00;cursor:pointer;font-weight:700}
     .btn[disabled]{opacity:.6;cursor:wait}
     .note{margin-bottom:12px}
     .ok{background:#e7fff1;color:#0a8f4a;border:1px solid #bff0d6;padding:12px 14px;border-radius:10px}
-    .err{background:#ffecec;color:#a40000;border:1px solid #f3b3b3;padding:12px 14px;border-radius:10px}
+    .err{background:#ffecec;color:#a40000;border:1px solid #f3b3b3;padding:12px 14px;border-radius:10px;white-space:pre-line}
     .center{display:flex;align-items:center;justify-content:center;min-height:200px;text-align:center}
     .hidden{display:none!important}
     small.hint{display:block;color:#6d7285}
@@ -33,10 +33,8 @@
   <div class="wrap">
     <h1>Анкета кандидата на должность администратора</h1>
 
-    <!-- Сообщения -->
     <div id="msg" class="note"></div>
 
-    <!-- Экран успеха -->
     <div id="success" class="hidden center">
       <div>
         <h2 style="margin:0 0 8px">✅ Спасибо!</h2>
@@ -45,8 +43,7 @@
       </div>
     </div>
 
-    <!-- Форма -->
-    <form id="appForm" enctype="multipart/form-data">
+    <form id="appForm" enctype="multipart/form-data" novalidate>
       <label>1. ФИО
         <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
       </label>
@@ -92,7 +89,7 @@
 
       <label>10. Опыт работы (место, должность, обязанности)
 
-ㅤ, [16.09.2025 1:30]
+ㅤ, [16.09.2025 1:38]
 <textarea name="experience" rows="3" placeholder="Где/когда работали, обязанности"></textarea>
       </label>
 
@@ -107,10 +104,12 @@
       <fieldset>
         <legend>13. Удобный график работы (по дням недели)</legend>
         <table>
-          <thead><tr><th>День</th><th>Статус</th><th>Часы (если сможет)</th><th>Причина</th></tr></thead>
+          <thead>
+            <tr><th>День</th><th>Статус</th><th>Часы (если сможет)</th><th>Причина</th></tr>
+          </thead>
           <tbody id="days-body"></tbody>
         </table>
-        <small class="hint">Пример: Пн — сможет 10–15 (причина: учёба после 15:00); Вт — не сможет (причина: экзамен).</small>
+        <small class="hint">Пример: Пн — сможет 10:00–15:00 (причина: учёба после 15:00); Вт — не сможет (причина: экзамен).</small>
       </fieldset>
 
       <label>14. Фото (обязательно)
@@ -123,81 +122,107 @@
   </div>
 
   <script>
-    // генерим дни недели
-    const days = [["mon","Пн"],["tue","Вт"],["wed","Ср"],["thu","Чт"],["fri","Пт"],["sat","Сб"],["sun","Вс"]];
-    document.getElementById('days-body').innerHTML = days.map(([k,t]) => `
-      <tr>
-        <td>${t}</td>
-        <td>
-          <select name="${k}_status" id="${k}_status" required>
-            <option value="">—</option>
-            <option value="can">Сможет</option>
-            <option value="cant">Не сможет</option>
-          </select>
-        </td>
-        <td><input type="text" name="${k}_hours" placeholder="Напр.: 10:00–18:00"></td>
-        <td><input type="text" name="${k}_reason" id="${k}_reason" required placeholder="Причина обязательна"></td>
-      </tr>
-    `).join("");
+    (function(){
+      var msg = document.getElementById('msg');
 
-    // возраст
-    const dob = document.getElementById('dob');
-    const ageOut = document.getElementById('age_display');
-    function calcAge(){
-      if(!dob.value){ ageOut.value=''; return; }
-      const d = new Date(dob.value), t = new Date();
-      let age = t.getFullYear() - d.getFullYear();
-      const m = t.getMonth() - d.getMonth();
-      if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
-      ageOut.value = isFinite(age) ? age + ' лет' : '';
-    }
-    dob.addEventListener('change', calcAge);
-
-    // отправка
-    const form = document.getElementById('appForm');
-    const msg  = document.getElementById('msg');
-    const okScreen = document.getElementById('success');
-    const btn = document.getElementById('sendBtn');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      // требуем причину если выбран статус
-      for (const [k,t] of days){
-        const st = document.getElementById(k+"_status").value;
-        const rs = document.getElementById(k+"_reason").value.trim();
-        if (st && !rs){
-          alert(`Укажите причину для дня ${t}.`);
-          return;
-        }
+      function showError(text){
+        msg.innerHTML = '<div class="err">'+ String(text).replace(/</g,'&lt;') +'</div>';
       }
 
-      const fd = new FormData(form);
-      btn.disabled = true;
-      const oldText = btn.textContent;
-      btn.textContent = 'Отправка…';
-      msg.innerHTML = '';
-
-      try{
-        const res = await fetch('/.netlify/functions/submit', { method: 'POST', body: fd });
-        let data = {};
-        try { data = await res.json(); } catch {}
-        if (res.ok && data.ok){
-          // чистый экран «спасибо»
-          form.classList.add('hidden');
-          okScreen.classList.remove('hidden');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }else{
-          const reason = data.error || ${res.status} ${res.statusText};
-          msg.innerHTML = <div class="err">Ошибка: ${reason}</div>;
+      try {
+        // генерим таблицу дней (без шаблонных строк)
+        var days = [
+          ['mon','Пн'],['tue','Вт'],['wed','Ср'],
+          ['thu','Чт'],['fri','Пт'],['sat','Сб'],['sun','Вс']
+        ];
+        var tbody = document.getElementById('days-body');
+        var html = '';
+        for (var i=0;i<days.length;i++){
+          var k = days[i][0], t = days[i][1];
+          html += '<tr>';
+          html +=   '<td>'+t+'</td>';
+          html +=   '<td><select name="'+k+'_status" id="'+k+'_status" required>'
+                  + '<option value="">—</option>'
+                  + '<option value="can">Сможет</option>'
+                  + '<option value="cant">Не сможет</option>'
+                  + '</select></td>';
+          html +=   '<td><input type="text" name="'+k+'_hours" placeholder="Напр.: 10:00–18:00"></td>';
+          html +=   '<td><input type="text" name="'+k+'_reason" id="'+k+'_reason" required placeholder="Причина обязательна"></td>';
+          html += '</tr>';
         }
-      }catch{
-        msg.innerHTML = '<div class="err">Сеть недоступна. Повторите попытку.</div>';
-      }finally{
-        btn.disabled = false;
-        btn.textContent = oldText;
+        tbody.innerHTML = html;
+
+        // возраст
+        var dob = document.getElementById('dob');
+        var ageOut = document.getElementById('age_display');
+        function calcAge(){
+          if(!dob.value){ ageOut.value=''; return; }
+          var d = new Date(dob.value), t = new Date();
+          var age = t.getFullYear() - d.getFullYear();
+          var m = t.getMonth() - d.getMonth();
+          if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
+          ageOut.value = (isFinite(age) ? age + ' лет' : '');
+        }
+        dob.addEventListener('change', calcAge);
+
+        // отправка
+        var form = document.getElementById('appForm');
+        var okScreen = document.getElementById('success');
+        var btn = document.getElementById('sendBtn');
+
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+
+          // требуем причину если выбран статус
+          for (var i=0;i<days.length;i++){
+            var k = days[i][0], t = days[i][1];
+            var st = document.getElementById(k+'_status').value;
+            var rs = document.getElementById(k+'_reason').value.trim();
+            if (st && !rs){
+              alert('Укажите причину для дня ' + t + '.');
+              return;
+            }
+          }
+
+          var fd = new FormData(form);
+          btn.disabled = true;
+          var oldText = btn.textContent;
+          btn.textContent = 'Отправка...';
+          msg.innerHTML = '';
+
+          fetch('/.netlify/functions/submit', { method: 'POST', body: fd })
+            .then(function(res){
+              return res.text().then(function(t){ 
+                // пробуем распарсить JSON, но если не JSON — покажем текст
+                try { return {res:res, data: JSON.
+
+ㅤ, [16.09.2025 1:38]
+parse(t)}; }
+                catch(_) { return {res:res, data:{}, raw:t}; }
+              });
+            })
+            .then(function(x){
+              if (x.res.ok && x.data && x.data.ok){
+                form.classList.add('hidden');
+                okScreen.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                var reason = (x.data && x.data.error)  (x.raw)  (x.res.status + ' ' + x.res.statusText);
+                showError('Ошибка: ' + reason);
+              }
+            })
+            .catch(function(){
+              showError('Сеть недоступна. Повторите попытку.');
+            })
+            .finally(function(){
+              btn.disabled = false;
+              btn.textContent = oldText;
+            });
+        });
+      } catch (e) {
+        showError('Ошибка скрипта: ' + (e && e.message ? e.message : e));
       }
-    });
+    })();
   </script>
 </body>
 </html>
