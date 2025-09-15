@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ЛЕГО СИТИ — Анкета кандидата</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+    body { font-family: Arial, sans-serif; background:#f6f8fa; margin:0; padding:20px; }
+    .container { max-width:800px; margin:auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 8px rgba(0,0,0,0.1); }
+    h1 { text-align:center; margin-bottom:20px; }
+    label { display:block; margin-top:15px; font-weight:bold; }
+    input, textarea, select { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:6px; font-size:14px; }
+    textarea { resize:vertical; }
+    button { display:block; margin:20px auto; padding:12px 30px; font-size:16px; font-weight:bold; background:#0078d7; color:white; border:none; border-radius:6px; cursor:pointer; }
+    button:hover { background:#005a9e; }
+    fieldset { border:1px solid #ddd; padding:15px; border-radius:8px; margin-top:20px; }
+    legend { font-weight:bold; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border:1px solid #ddd; padding:6px; text-align:left; }
+    th { background:#f2f2f2; }
+    .hint { font-size:12px; color:#555; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Анкета кандидата на должность администратора</h1>
+    <form action="/submit" method="post" enctype="multipart/form-data" id="appForm">
+
+      <label>1. Фамилия, имя, отчество
+        <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
+      </label>
+
+      <label>2. Дата рождения
+        <input type="date" name="dob_date" id="dob" required>
+      </label>
+
+      <label>Возраст (автоматически)
+        <input type="text" id="age_display" readonly placeholder="—">
+      </label>
+
+      <label>3. Контактный телефон
+        <input type="tel" name="phone" required placeholder="+7 999 123-45-67">
+      </label>
+
+      <label>4. Ваш Telegram
+        <input type="text" name="telegram" placeholder="@username">
+      </label>
+
+      <label>5. Адрес проживания (фактический)
+        <input type="text" name="address" placeholder="Город, улица, дом">
+      </label>
+
+      <label>6. Адрес прописки (по паспорту)
+        <input type="text" name="passport_registration" required placeholder="Город, улица, дом">
+      </label>
+
+      <label>7. Серия и номер паспорта
+        <input type="text" name="passport_number" required placeholder="1234 567890">
+      </label>
+
+      <label>8. Кем выдан паспорт
+        <input type="text" name="passport_issuer" required placeholder="УФМС России по г. Москве">
+      </label>
+
+      <label>9. Образование
+        <input type="text" name="education" placeholder="Учебное заведение, специальность">
+      </label>
+
+      <label>10. Опыт работы
+        <textarea name="experience" rows="3" placeholder="Где работали и обязанности"></textarea>
+      </label>
+
+      <label>11. Навыки
+        <textarea name="skills" rows="2" placeholder="Работа с клиентами, касса и т.д."></textarea>
+      </label>
+
+      <label>12. Почему хотите работать у нас?
+        <textarea name="why_us" rows="2"></textarea>
+      </label>
+
+      <fieldset>
+        <legend>13. Удобный график работы (по дням недели)</legend>
+        <table>
+          <thead>
+            <tr>
+              <th>День</th>
+              <th>Статус</th>
+              <th>Часы</th>
+              <th>Причина</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Пн</td><td><select name="mon_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input type="text" name="mon_hours"></td><td><input type="text" name="mon_reason" required></td></tr>
+            <tr><td>Вт</td><td><select name="tue_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input type="text" name="tue_hours"></td><td><input type="text" name="tue_reason" required></td></tr>
+            <tr><td>Ср</td><td><select name="wed_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input type="text" name="wed_hours"></td><td><input type="text" name="wed_reason" required></td></tr>
+            <tr><td>Чт</td><td><select name="thu_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input type="text" name="thu_hours"></td><td><input type="text" name="thu_reason" required></td></tr>
+            <tr><td>Пт</td><td><select name="fri_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input type="text" name="fri_hours"></td><td><input type="text" name="fri_reason" required></td></tr>
+            <tr><td>Сб</td><td><select name="sat_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input type="text" name="sat_hours"></td><td><input type="text" name="sat_reason" required></td></tr>
+            <tr><td>Вс</td><td><select name="sun_status" required><option value="">—</option><option value="can">Сможет</option><option value="cant">Не сможет</option></select></td><td><input type="text" name="sun_hours"></td><td><input type="text" name="sun_reason" required></td></tr>
+          </tbody>
+        </table>
+      </fieldset>
+
+      <label>14. Фото
+        <input type="file" name="photo" accept="image/*" required>
+      </label>
+
+      <button type="submit">Отправить заявку</button>
+    </form>
+  </div>
+
+  <script>
+    const dob = document.getElementById('dob');
+    const ageOut = document.getElementById('age_display');
+    dob.addEventListener('change', () => {
+      if (!dob.value) return;
+      const d = new Date(dob.value);
+      const t = new Date();
+      let age = t.getFullYear() - d.getFullYear();
+      const m = t.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
+      ageOut.value = age + " лет";
+    });
+  </script>
+</body>
+</html>
