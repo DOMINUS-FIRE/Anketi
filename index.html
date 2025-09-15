@@ -1,9 +1,10 @@
+ㅤ, [16.09.2025 2:18]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ЛЕГО СИТИ — Анкета кандидата</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f6f7fb;margin:0;padding:24px}
     .wrap{max-width:860px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:22px}
@@ -32,7 +33,7 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="tag">BUILD v11</div>
+    <div class="tag">BUILD v12</div>
     <h1>Анкета кандидата на должность администратора</h1>
 
     <div id="msg" class="note"></div>
@@ -88,7 +89,7 @@
 
       <label>9. Образование
 
-ㅤ, [16.09.2025 2:10]
+ㅤ, [16.09.2025 2:18]
 <input type="text" name="education" placeholder="Учебное заведение, специальность">
       </label>
 
@@ -126,47 +127,37 @@
         <small class="hint">JPG/PNG/WEBP до ~10 МБ.</small>
       </label>
 
-      <!-- type="button": форма не уйдёт без JS -->
-      <button id="sendBtn" class="btn" type="button">Отправить заявку</button>
+      <button id="sendBtn" class="btn" type="submit">Отправить заявку</button>
     </form>
   </div>
 
   <script>
-    console.log('BUILD v11 loaded');
+    // === Автоподсчёт возраста из <input type="date"> ===
+    document.addEventListener("DOMContentLoaded", function () {
+      var dob = document.getElementById("dob");
+      var out = document.getElementById("age_display");
 
-    // === Подсчёт возраста для <input type="date"> ===
-    (function(){
-      var dob = document.getElementById('dob');
-      var out = document.getElementById('age_display');
-
-      function parseDateFromInput(el){
-        if ('valueAsDate' in el && el.valueAsDate instanceof Date && !isNaN(el.valueAsDate)) {
-          var d = el.valueAsDate;
-          return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-        }
-        var v = (el.value || '').trim();
-        var m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/); // ISO
-        if (m) return new Date(+m[1], +m[2]-1, +m[3]);
-        m = v.match(/^(\d{2})[.\/-](\d{2})[.\/-](\d{4})$/); // 18.11.1994 / 18/11/1994
-        if (m) return new Date(+m[3], +m[2]-1, +m[1]);
-        return null;
-      }
-
-      function calcAge(){
-        var d = parseDateFromInput(dob);
-        if (!d || isNaN(d.getTime())) { out.value = ''; return; }
-
-ㅤ, [16.09.2025 2:10]
-var t = new Date();
+      function calcAge() {
+        if (!dob.value) { out.value = ""; return; }
+        // value у type="date" — всегда YYYY-MM-DD (в нормальных браузерах)
+        var d = new Date(dob.value);
+        if (isNaN(d.getTime())) { out.value = ""; return; }
+        var t = new Date();
         var age = t.getFullYear() - d.getFullYear();
-        var m  = t.getMonth() - d.getMonth();
+        var m = t.getMonth() - d.getMonth();
         if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
-        out.value = isFinite(age) ? (age + ' лет') : '';
+        out.value = isFinite(age) ? (age + " лет") : "";
       }
 
-      ['input','change','blur'].forEach(function(ev){ dob.addEventListener(ev, calcAge); });
-      if (dob.value) calcAge(); // если подставилось автозаполнением
-    })();
+      dob.addEventListener("input", calcAge);
+      dob.addEventListener("change", calcAge);
+      // если автозаполнилось — посчитаем сразу (и ещё раз через тик)
+      if (dob.value) calcAge();
+      setTimeout(function(){ if (dob.value && !out.
+
+ㅤ, [16.09.2025 2:18]
+value) calcAge(); }, 100);
+    });
 
     // === Отправка формы через Netlify Function ===
     (function(){
@@ -177,34 +168,37 @@ var t = new Date();
 
       function showErr(t){ msg.innerHTML = '<div class="err">'+ String(t).replace(/</g,'&lt;') +'</div>'; }
 
-      btn.addEventListener('click', function(){
-        // простая клиентская проверка причин при указании статуса
-        var dayNames = ['mon','tue','wed','thu','fri','sat','sun'];
-        for (var i=0;i<dayNames.length;i++){
-          var k = dayNames[i];
-          var st = form.elements[k+'_status'].value || '';
-          var rs = (form.elements[k+'_reason'].value || '').trim();
-          if (st && !rs) { alert('Укажите причину для дня: ' + k.toUpperCase()); return; }
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+
+        // требуем причину, если выбран статус
+        var need = ['mon','tue','wed','thu','fri','sat','sun'];
+        for (var i=0;i<need.length;i++){
+          var k = need[i];
+          var st = (form.elements[k+'_status'] && form.elements[k+'_status'].value) || '';
+          var rs = ((form.elements[k+'_reason'] && form.elements[k+'_reason'].value) || '').trim();
+          if (st && !rs){ alert('Укажите причину для дня: ' + k.toUpperCase()); return; }
         }
 
         var fd = new FormData(form);
         btn.disabled = true;
-        var old = btn.textContent; btn.textContent = 'Отправка...'; msg.innerHTML='';
+        var old = btn.textContent; btn.textContent = 'Отправка...'; msg.innerHTML = '';
 
-        fetch('/.netlify/functions/submit', { method:'POST', body: fd })
-          .then(function(res){ return res.text().then(function(t){ try{return{res:res,data:JSON.parse(t)}}catch(_){return{res:res,raw:t}};}); })
+        fetch('/.netlify/functions/submit', { method: 'POST', body: fd })
+          .then(function(res){ return res.text().then(function(t){ try { return {res:res, data:JSON.parse(t)} } catch(_) { return {res:res, raw:t} } }); })
           .then(function(x){
             if (x.res.ok && x.data && x.data.ok){
-              form.classList.add('hidden'); ok.classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'});
+              form.classList.add('hidden');
+              ok.classList.remove('hidden');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
               showErr((x.data && x.data.error)  x.raw  (x.res.status + ' ' + x.res.statusText));
             }
           })
           .catch(function(){ showErr('Сеть недоступна. Повторите попытку.'); })
-          .finally(function(){ btn.disabled=false; btn.textContent=old; });
+          .finally(function(){ btn.disabled = false; btn.textContent = old; });
       });
     })();
   </script>
 </body>
 </html>
-
