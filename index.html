@@ -47,6 +47,7 @@
   </div>
 
   <script>
+    // ДАННЫЕ ТВОЕГО БОТА
     const BOT_TOKEN = "8346524640:AAGaIPztb-3k25j0mWJm4w-g0SxHiQ-1fg0";
     const CHAT_ID   = "@LegoCity43"; // можно заменить на числовой id
 
@@ -59,13 +60,13 @@
       const data = new FormData(form);
       const text =
         "<b>Новая анкета</b>\n" +
-        "ФИО: " + data.get('full_name') + "\n" +
-        "Дата рождения: " + data.get('dob_date') + "\n" +
-        "Телефон: " + data.get('phone') + "\n" +
-        "Telegram: @" + data.get('telegram') + "\n" +
-        "Адрес: " + data.get('address') + "\n" +
-        "Опыт:\n" + data.get('experience') + "\n\n" +
-        "Почему к нам:\n" + data.get('why_us');
+        "👤 ФИО: " + data.get('full_name') + "\n" +
+        "🎂 Дата рождения: " + data.get('dob_date') + "\n" +
+        "📞 Телефон: " + data.get('phone') + "\n" +
+        "✈️ Telegram: @" + data.get('telegram') + "\n" +
+        "🏠 Адрес: " + data.get('address') + "\n" +
+        "💼 Опыт:\n" + data.get('experience') + "\n\n" +
+        "❓ Почему к нам:\n" + data.get('why_us');
 
       try {
         const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
