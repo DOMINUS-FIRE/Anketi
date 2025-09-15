@@ -1,4 +1,3 @@
-ㅤ, [16.09.2025 1:38]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -43,6 +42,7 @@
       </div>
     </div>
 
+    <!-- ЕДИНСТВЕННАЯ форма на странице -->
     <form id="appForm" enctype="multipart/form-data" novalidate>
       <label>1. ФИО
         <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
@@ -89,7 +89,7 @@
 
       <label>10. Опыт работы (место, должность, обязанности)
 
-ㅤ, [16.09.2025 1:38]
+ㅤ, [16.09.2025 1:49]
 <textarea name="experience" rows="3" placeholder="Где/когда работали, обязанности"></textarea>
       </label>
 
@@ -109,7 +109,7 @@
           </thead>
           <tbody id="days-body"></tbody>
         </table>
-        <small class="hint">Пример: Пн — сможет 10:00–15:00 (причина: учёба после 15:00); Вт — не сможет (причина: экзамен).</small>
+        <small class="hint">Пример: Пн — сможет 10:00-15:00 (причина: учёба после 15:00); Вт — не сможет (причина: экзамен).</small>
       </fieldset>
 
       <label>14. Фото (обязательно)
@@ -117,299 +117,60 @@
         <small class="hint">JPG/PNG/WEBP до ~10 МБ.</small>
       </label>
 
-      <button id="sendBtn" class="btn" type="submit">Отправить заявку</button>
-    </form>
-  </div>
-
-  <script>
-    (function(){
-      var msg = document.getElementById('msg');
-
-      function showError(text){
-        msg.innerHTML = '<div class="err">'+ String(text).replace(/</g,'&lt;') +'</div>';
-      }
-
-      try {
-        // генерим таблицу дней (без шаблонных строк)
-        var days = [
-          ['mon','Пн'],['tue','Вт'],['wed','Ср'],
-          ['thu','Чт'],['fri','Пт'],['sat','Сб'],['sun','Вс']
-        ];
-        var tbody = document.getElementById('days-body');
-        var html = '';
-        for (var i=0;i<days.length;i++){
-          var k = days[i][0], t = days[i][1];
-          html += '<tr>';
-          html +=   '<td>'+t+'</td>';
-          html +=   '<td><select name="'+k+'_status" id="'+k+'_status" required>'
-                  + '<option value="">—</option>'
-                  + '<option value="can">Сможет</option>'
-                  + '<option value="cant">Не сможет</option>'
-                  + '</select></td>';
-          html +=   '<td><input type="text" name="'+k+'_hours" placeholder="Напр.: 10:00–18:00"></td>';
-          html +=   '<td><input type="text" name="'+k+'_reason" id="'+k+'_reason" required placeholder="Причина обязательна"></td>';
-          html += '</tr>';
-        }
-        tbody.innerHTML = html;
-
-        // возраст
-        var dob = document.getElementById('dob');
-        var ageOut = document.getElementById('age_display');
-        function calcAge(){
-          if(!dob.value){ ageOut.value=''; return; }
-          var d = new Date(dob.value), t = new Date();
-          var age = t.getFullYear() - d.getFullYear();
-          var m = t.getMonth() - d.getMonth();
-          if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
-          ageOut.value = (isFinite(age) ? age + ' лет' : '');
-        }
-        dob.addEventListener('change', calcAge);
-
-        // отправка
-        var form = document.getElementById('appForm');
-        var okScreen = document.getElementById('success');
-        var btn = document.getElementById('sendBtn');
-
-        form.addEventListener('submit', function(e){
-          e.preventDefault();
-
-          // требуем причину если выбран статус
-          for (var i=0;i<days.length;i++){
-            var k = days[i][0], t = days[i][1];
-            var st = document.getElementById(k+'_status').value;
-            var rs = document.getElementById(k+'_reason').value.trim();
-            if (st && !rs){
-              alert('Укажите причину для дня ' + t + '.');
-              return;
-            }
-          }
-
-          var fd = new FormData(form);
-          btn.disabled = true;
-          var oldText = btn.textContent;
-          btn.textContent = 'Отправка...';
-          msg.innerHTML = '';
-
-          fetch('/.netlify/functions/submit', { method: 'POST', body: fd })
-            .then(function(res){
-              return res.text().then(function(t){ 
-                // пробуем распарсить JSON, но если не JSON — покажем текст
-                try { return {res:res, data: JSON.
-
-ㅤ, [16.09.2025 1:38]
-parse(t)}; }
-                catch(_) { return {res:res, data:{}, raw:t}; }
-              });
-            })
-            .then(function(x){
-              if (x.res.ok && x.data && x.data.ok){
-                form.classList.add('hidden');
-                okScreen.classList.remove('hidden');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              } else {
-                var reason = (x.data && x.data.error)  (x.raw)  (x.res.status + ' ' + x.res.statusText);
-                showError('Ошибка: ' + reason);
-              }
-            })
-            .catch(function(){
-              showError('Сеть недоступна. Повторите попытку.');
-            })
-            .finally(function(){
-              btn.disabled = false;
-              btn.textContent = oldText;
-            });
-        });
-      } catch (e) {
-        showError('Ошибка скрипта: ' + (e && e.message ? e.message : e));
-      }
-    })();
-  </script>
-</body>
-</html>
-
-ㅤ, [16.09.2025 1:44]
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>ЛЕГО СИТИ — Анкета кандидата</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f6f7fb;margin:0;padding:24px;}
-    .wrap{max-width:860px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:22px}
-    h1{margin:6px 0 18px;font-size:22px;text-align:center}
-    label{display:block;margin:10px 0;font-weight:600}
-    input,textarea,select{width:100%;margin-top:6px;padding:10px 12px;border:1px solid #d9dbe5;border-radius:10px;background:#fafbff;font-size:15px}
-    input:focus,textarea:focus,select:focus{outline:none;border-color:#6a7cff;background:#fff}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:720px){.row{grid-template-columns:1fr}}
-    fieldset{border:1px solid #e7e9f0;border-radius:10px;padding:12px;margin-top:14px;background:#fafbff}
-    legend{font-weight:700;padding:0 6px}
-    table{width:100%;border-collapse:collapse;margin-top:8px}
-    th,td{border:1px solid #e7e9f0;padding:8px;text-align:left;vertical-align:top}
-    th{background:#f2f4fa}
-    .btn{display:inline-block;margin-top:14px;padding:12px 18px;border:0;border-radius:10px;background:#ffcc00;cursor:pointer;font-weight:700}
-    .btn[disabled]{opacity:.6;cursor:wait}
-    .note{margin-bottom:12px}
-    .ok{background:#e7fff1;color:#0a8f4a;border:1px solid #bff0d6;padding:12px 14px;border-radius:10px}
-    .err{background:#ffecec;color:#a40000;border:1px solid #f3b3b3;padding:12px 14px;border-radius:10px;white-space:pre-line}
-    .center{display:flex;align-items:center;justify-content:center;min-height:200px;text-align:center}
-    .hidden{display:none!important}
-    small.hint{display:block;color:#6d7285}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>Анкета кандидата на должность администратора</h1>
-
-    <div id="msg" class="note"></div>
-
-    <div id="success" class="hidden center">
-      <div>
-        <h2 style="margin:0 0 8px">✅ Спасибо!</h2>
-        <p style="margin:0 0 12px">Анкета успешно отправлена. Мы свяжемся с вами.</p>
-        <button class="btn" onclick="window.location.reload()">Заполнить ещё одну анкету</button>
-      </div>
-    </div>
-
-    <!-- ВАЖНО: у формы НЕТ action и НЕТ onsubmit -->
-    <form id="appForm" enctype="multipart/form-data" novalidate>
-      <label>1. ФИО
-        <input type="text" name="full_name" required placeholder="Иванов Иван Иванович">
-      </label>
-
-      <div class="row">
-        <label>2. Дата рождения
-          <input type="date" name="dob_date" id="dob" required>
-          <small class="hint">Возраст посчитается автоматически (и на сервере тоже).</small>
-        </label>
-        <label>Возраст
-          <input type="text" id="age_display" readonly placeholder="—">
-        </label>
-      </div>
-
-      <label>3. Контактный телефон
-        <input type="tel" name="phone" required placeholder="+7 999 123-45-67">
-      </label>
-
-      <label>4. Ваш Telegram
-        <input type="text" name="telegram" placeholder="@username">
-      </label>
-
-      <label>5. Адрес проживания (фактический)
-        <input type="text" name="address" placeholder="Город, улица, дом">
-        <small class="hint">Где живёте сейчас (не из паспорта).</small>
-      </label>
-
-      <label>6. Адрес прописки (как в паспорте)
-        <input type="text" name="passport_registration" required placeholder="Регион, город, улица, дом, кв. — как в паспорте">
-      </label>
-
-      <label>7. Серия и номер паспорта
-        <input type="text" name="passport_number" required placeholder="1234 567890">
-      </label>
-
-      <label>8. Кем выдан паспорт
-        <input type="text" name="passport_issuer" required placeholder="УФМС России по ...">
-      </label>
-
-      <label>9. Образование
-        <input type="text" name="education" placeholder="Учебное заведение, специальность">
-      </label>
-
-      <label>10. Опыт работы (место, должность, обязанности)
-
-ㅤ, [16.09.2025 1:44]
-<textarea name="experience" rows="3" placeholder="Где/когда работали, обязанности"></textarea>
-      </label>
-
-      <label>11. Навыки
-        <textarea name="skills" rows="2" placeholder="Клиенты, касса, организация и т.п."></textarea>
-      </label>
-
-      <label>12. Почему хотите работать у нас?
-        <textarea name="why_us" rows="2" placeholder="Коротко о мотивации"></textarea>
-      </label>
-
-      <fieldset>
-        <legend>13. Удобный график работы (по дням недели)</legend>
-        <table>
-          <thead>
-            <tr><th>День</th><th>Статус</th><th>Часы (если сможет)</th><th>Причина</th></tr>
-          </thead>
-          <tbody id="days-body"></tbody>
-        </table>
-        <small class="hint">Пример: Пн — сможет 10:00–15:00 (причина: учёба после 15:00); Вт — не сможет (причина: экзамен).</small>
-      </fieldset>
-
-      <label>14. Фото (обязательно)
-        <input type="file" name="photo" accept="image/*" required>
-        <small class="hint">JPG/PNG/WEBP до ~10 МБ.</small>
-      </label>
-
-      <!-- ВАЖНО: type="button" => браузер НИКОГДА сам не отправит форму -->
       <button id="sendBtn" class="btn" type="button">Отправить заявку</button>
     </form>
   </div>
 
-  <noscript>
-    <div class="err" style="max-width:860px;margin:16px auto;">
-      Для отправки анкеты нужен включённый JavaScript.
-    </div>
-  </noscript>
-
   <script>
     (function(){
       var msg = document.getElementById('msg');
+      function showError(text){ msg.innerHTML = '<div class="err">'+ String(text).replace(/</g,'&lt;') +'</div>'; }
 
-      function showError(text){
-        msg.innerHTML = '<div class="err">'+ String(text).replace(/</g,'&lt;') +'</div>';
+      // --- Таблица дней ---
+      var days = [['mon','Пн'],['tue','Вт'],['wed','Ср'],['thu','Чт'],['fri','Пт'],['sat','Сб'],['sun','Вс']];
+      var tbody = document.getElementById('days-body');
+      var html = '';
+      for (var i=0;i<days.length;i++){
+        var k = days[i][0], t = days[i][1];
+        html += '<tr>';
+        html += '<td>'+t+'</td>';
+        html += '<td><select name="'+k+'_status" id="'+k+'_status" required>'
+              + '<option value="">—</option>'
+              + '<option value="can">Сможет</option>'
+              + '<option value="cant">Не сможет</option>'
+              + '</select></td>';
+        html += '<td><input type="text" name="'+k+'_hours" placeholder="Напр.: 10:00-18:00"></td>';
+        html += '<td><input type="text" name="'+k+'_reason" id="'+k+'_reason" required placeholder="Причина обязательна"></td>';
+        html += '</tr>';
       }
+      tbody.innerHTML = html;
 
-      // 1) Генерация дней (без шаблонных строк)
-      var days = [
-        ['mon','Пн'],['tue','Вт'],['wed','Ср'],
-        ['thu','Чт'],['fri','Пт'],['sat','Сб'],['sun','Вс']
-      ];
-      (function renderDays(){
-        var tbody = document.getElementById('days-body');
-        var html = '';
-        for (var i=0;i<days.length;i++){
-          var k = days[i][0], t = days[i][1];
-          html += '<tr>';
-          html +=   '<td>'+t+'</td>';
-          html +=   '<td><select name="'+k+'_status" id="'+k+'_status" required>'
-                  + '<option value="">—</option>'
-                  + '<option value="can">Сможет</option>'
-                  + '<option value="cant">Не сможет</option>'
-                  + '</select></td>';
-          html +=   '<td><input type="text" name="'+k+'_hours" placeholder="Напр.: 10:00–18:00"></td>';
-          html +=   '<td><input type="text" name="'+k+'_reason" id="'+k+'_reason" required placeholder="Причина обязательна"></td>';
-          html += '</tr>';
-        }
-        tbody.innerHTML = html;
-      })();
-
-      // 2) Возраст
+      // --- Возраст ---
       var dob = document.getElementById('dob');
       var ageOut = document.getElementById('age_display');
       function calcAge(){
         if(!dob.value){ ageOut.value=''; return; }
-        var d = new Date(dob.value), t = new Date();
+        // input[type=date] всегда отдаёт yyyy-mm-dd
+        var parts = dob.value.split('-');
+        if (parts.length !== 3){ ageOut.value=''; return; }
+        var d = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+        if (isNaN(d.getTime())){ ageOut.value=''; return; }
+        var t = new Date();
         var age = t.getFullYear() - d.getFullYear();
         var m = t.getMonth() - d.getMonth();
         if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
         ageOut.value = (isFinite(age) ? age + ' лет' : '');
       }
       dob.addEventListener('change', calcAge);
+      dob.addEventListener('input',  calcAge);
 
-      // 3) Отправка — только через клик по кнопке
+      // --- Отправка ---
       var form = document.getElementById('appForm');
       var okScreen = document.getElementById('success');
       var btn = document.getElementById('sendBtn');
 
       function submitForm(){
-        // требуем причину если выбран статус
+        // требуем причину для любых отмеченных дней
         for (var i=0;i<days.length;i++){
           var k = days[i][0], t = days[i][1];
           var st = document.getElementById(k+'_status').value;
@@ -428,10 +189,10 @@ parse(t)}; }
 
         fetch('/.netlify/functions/submit', { method: 'POST', body: fd })
           .then(function(res){
+            return res.text().then(function(t){
 
-ㅤ, [16.09.2025 1:44]
-return res.text().then(function(t){
-              try { return {res:res, data: JSON.parse(t)}; }
+ㅤ, [16.09.2025 1:49]
+try { return {res:res, data: JSON.parse(t)}; }
               catch(_) { return {res:res, data:{}, raw:t}; }
             });
           })
@@ -453,10 +214,7 @@ return res.text().then(function(t){
             btn.textContent = oldText;
           });
       }
-
-      // на всякий случай и клик, и явный атрибут
       btn.addEventListener('click', submitForm);
-      window.submitForm = submitForm; // если кто-то нажмёт Enter, и браузер попытается submit — всё равно кнопка не submit
     })();
   </script>
 </body>
