@@ -1,4 +1,4 @@
-ㅤ, [17.09.2025 2:12]
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -129,53 +129,85 @@
 </div>
 
 <script>
-  // Заполнение даты рождения
-  const daySel = document.getElementById('dob_day');
+  // Элементы
+  const daySel   = document.getElementById('dob_day');
   const monthSel = document.getElementById('dob_month');
-  const yearSel = document.getElementById('dob_year');
+  const yearSel  = document.getElementById('dob_year');
   const ageInput = document.getElementById('age');
 
-  for (let d=1; d<=31; d++) {
+  // Помощник для ведущих нулей
+  const pad2 = (n) => String(n).padStart(2, '0');
+
+  // Заполняем селекты: сначала плейсхолдеры
+  daySel.add(new Option('День', ''));
+  monthSel.add(new Option('Месяц', ''));
+  yearSel.add(new Option('Год', ''));
+
+  // Дни 1..31
+  for (let d = 1; d <= 31; d++) {
     daySel.add(new Option(d, d));
   }
 
-ㅤ, [17.09.2025 2:12]
-const months = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
-  months.forEach((m,i)=> monthSel.add(new Option(m, i+1)));
+  // Месяцы
+  const months = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  months.forEach((m, i) => monthSel.add(new Option(m, i + 1)));
+
+  // Годы от текущего до 1940
   const thisYear = new Date().getFullYear();
-  for (let y=thisYear; y>=1940; y--) {
+  for (let y = thisYear; y >= 1940; y--) {
     yearSel.add(new Option(y, y));
   }
 
+  // Подсчёт возраста + запись в скрытое поле dob_date
   function updateAge() {
-    if (!daySel.value  !monthSel.value  !yearSel.value) return;
-    const dob = new Date(yearSel.value, monthSel.value-1, daySel.value);
+    if (!daySel.value || !monthSel.value || !yearSel.value) return;
+
+    const dd = parseInt(daySel.value, 10);
+    const mm = parseInt(monthSel.value, 10);
+    const yy = parseInt(yearSel.value, 10);
+
+    const dob = new Date(yy, mm - 1, dd);
     const today = new Date();
+
     let age = today.getFullYear() - dob.getFullYear();
     const m = today.getMonth() - dob.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-    ageInput.value = ${dob.getDate()}.${dob.getMonth()+1}.${dob.getFullYear()} (возраст: ${age});
-  }
-  daySel.onchange = monthSel.onchange = yearSel.onchange = updateAge;
 
-  // Отправка формы
+    // то, что отправим на бэкенд (одно поле dob_date)
+    ageInput.value = `${pad2(dd)}.${pad2(mm)}.${yy} (возраст: ${age})`;
+  }
+
+  // Считаем при каждом изменении
+  daySel.addEventListener('change', updateAge);
+  monthSel.addEventListener('change', updateAge);
+  yearSel.addEventListener('change', updateAge);
+
+  // Отправка формы на Render
   document.getElementById('anketaForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const fd = new FormData(e.target);
-    document.querySelector('.container').style.display = "none";
 
-    const resp = await fetch("https://bot-h16b.onrender.com/submit", {
-      method: "POST",
+    // подстрахуемся: если дата выбрана, но возраст ещё не посчитался
+    updateAge();
+
+    const fd = new FormData(e.target);
+
+    // можно показывать лоадер/прятать форму
+    document.querySelector('.container').style.display = 'none';
+
+    const resp = await fetch('https://bot-h16b.onrender.com/submit', {
+      method: 'POST',
       body: fd
     });
 
     if (resp.ok) {
-      document.getElementById("success-message").style.display = "block";
+      document.getElementById('success-message').style.display = 'block';
     } else {
-      alert("Ошибка при отправке анкеты");
-      document.querySelector('.container').style.display = "block";
+      alert('Ошибка при отправке анкеты');
+      document.querySelector('.container').style.display = 'block';
     }
   });
 </script>
+
 </body>
 </html>
+
