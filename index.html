@@ -1,213 +1,155 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Анкета кандидата</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f3f3f3;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 30px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,.1);
-    }
-    h2 { text-align: center; }
-    label { display: block; margin-top: 12px; font-weight: bold; }
-    input, textarea, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .dob-row {
-      display: flex;
-      gap: 5px;
-    }
-    .dob-row select { flex: 1; }
-    .schedule {
-      display: grid;
-      grid-template-columns: 80px 1fr 1fr 1fr;
-      gap: 5px;
-      align-items: center;
-      margin-top: 10px;
-    }
-    .schedule div { font-size: 14px; font-weight: bold; }
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 10px;
-      background: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover { background: #0056b3; }
-    #success-message {
-      text-align: center;
-      color: green;
-      font-weight: bold;
-      margin-top: 20px;
-      display: none;
-    }
+    body{font-family:Arial, sans-serif;background:#f3f3f3;margin:0}
+    .container{max-width:640px;margin:24px auto;padding:20px;background:#fff;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+    h2{text-align:center;margin:0 0 16px}
+    label{display:block;margin-top:12px;font-weight:600}
+    input,textarea,select{width:100%;padding:10px;margin-top:6px;border:1px solid #dcdcdc;border-radius:8px}
+    textarea{min-height:80px;resize:vertical}
+    .dob-row{display:flex;gap:8px}
+    .dob-row select{flex:1}
+    .schedule{display:grid;grid-template-columns:70px 1fr 1fr 1fr;gap:6px;align-items:center;margin-top:10px}
+    .schedule div{font-weight:700;font-size:14px}
+    button{margin-top:18px;width:100%;padding:12px;background:#0d6efd;color:#fff;border:0;border-radius:8px;font-size:16px;cursor:pointer}
+    button:hover{background:#0b5ed7}
+    .muted{color:#666;font-size:13px}
+    .ok{display:none;text-align:center;color:green;font-weight:700;margin-top:12px}
+    .err{display:none;text-align:center;color:#c00;font-weight:700;margin-top:12px;white-space:pre-wrap}
   </style>
 </head>
 <body>
-<div class="container">
-  <h2>Анкета кандидата</h2>
-  <form id="anketaForm">
-    <label>ФИО</label>
-    <input type="text" name="full_name" required>
+  <div class="container" id="card">
+    <h2>Анкета кандидата</h2>
+    <form id="anketaForm" enctype="multipart/form-data">
+      <label>ФИО</label>
+      <input type="text" name="full_name" required />
 
-    <label>Дата рождения</label>
-    <div class="dob-row">
-      <select id="dob_day" name="dob_day" required></select>
-      <select id="dob_month" name="dob_month" required></select>
-      <select id="dob_year" name="dob_year" required></select>
-    </div>
-    <input type="text" id="age" name="dob_date" readonly placeholder="Возраст">
+      <label>Дата рождения <span class="muted">(возраст посчитается автоматически)</span></label>
+      <div class="dob-row">
+        <select id="dob_day"   name="dob_day"   required></select>
+        <select id="dob_month" name="dob_month" required></select>
+        <select id="dob_year"  name="dob_year"  required></select>
+      </div>
+      <input type="text" id="age" name="dob_date" placeholder="ДД.ММ.ГГГГ (возраст: N)" readonly />
 
-    <label>Телефон</label>
-    <input type="text" name="phone">
+      <label>Телефон</label>
+      <input type="text" name="phone" />
 
-    <label>Telegram</label>
-    <input type="text" name="telegram">
+      <label>Telegram</label>
+      <input type="text" name="telegram" />
 
-    <label>Адрес проживания</label>
-    <input type="text" name="address">
+      <label>Адрес проживания</label>
+      <input type="text" name="address" />
 
-    <label>Прописка (из паспорта)</label>
-    <input type="text" name="passport_registration">
+      <label>Прописка (из паспорта)</label>
+      <input type="text" name="passport_registration" />
 
-    <label>Паспорт (серия, номер)</label>
-    <input type="text" name="passport_number">
+      <label>Паспорт (серия, номер)</label>
+      <input type="text" name="passport_number" />
 
-    <label>Кем выдан паспорт</label>
-    <input type="text" name="passport_issuer">
+      <label>Кем выдан паспорт</label>
+      <input type="text" name="passport_issuer" />
 
-    <label>Образование</label>
-    <textarea name="education"></textarea>
+      <label>Образование</label>
+      <textarea name="education"></textarea>
 
-    <label>Опыт работы</label>
-    <textarea name="experience"></textarea>
+      <label>Опыт работы</label>
+      <textarea name="experience"></textarea>
 
-    <label>Навыки</label>
-    <textarea name="skills"></textarea>
+      <label>Навыки</label>
+      <textarea name="skills"></textarea>
 
-    <label>Почему хотите работать у нас?</label>
-    <textarea name="why_us"></textarea>
+      <label>Почему хотите работать у нас?</label>
+      <textarea name="why_us"></textarea>
 
-    <label>Фото (паспорт/лицо)</label>
-    <input type="file" name="photo" accept="image/*">
+      <label>Фото (паспорт/лицо)</label>
+      <input type="file" name="photo" accept="image/*" />
 
-    <h3>График работы</h3>
-    <div class="schedule">
-      <div>День</div><div>Статус</div><div>Часы</div><div>Причина</div>
-      <div>Пн</div><input name="mon_status"><input name="mon_hours"><input name="mon_reason">
-      <div>Вт</div><input name="tue_status"><input name="tue_hours"><input name="tue_reason">
-      <div>Ср</div><input name="wed_status"><input name="wed_hours"><input name="wed_reason">
-      <div>Чт</div><input name="thu_status"><input name="thu_hours"><input name="thu_reason">
-      <div>Пт</div><input name="fri_status"><input name="fri_hours"><input name="fri_reason">
-      <div>Сб</div><input name="sat_status"><input name="sat_hours"><input name="sat_reason">
-      <div>Вс</div><input name="sun_status"><input name="sun_hours"><input name="sun_reason">
-    </div>
+      <h3>График работы</h3>
+      <div class="schedule">
+        <div>День</div><div>Статус</div><div>Часы</div><div>Причина</div>
+        <div>Пн</div><input name="mon_status"><input name="mon_hours"><input name="mon_reason">
+        <div>Вт</div><input name="tue_status"><input name="tue_hours"><input name="tue_reason">
+        <div>Ср</div><input name="wed_status"><input name="wed_hours"><input name="wed_reason">
+        <div>Чт</div><input name="thu_status"><input name="thu_hours"><input name="thu_reason">
+        <div>Пт</div><input name="fri_status"><input name="fri_hours"><input name="fri_reason">
+        <div>Сб</div><input name="sat_status"><input name="sat_hours"><input name="sat_reason">
+        <div>Вс</div><input name="sun_status"><input name="sun_hours"><input name="sun_reason">
+      </div>
 
-    <button type="submit">Отправить анкету</button>
-  </form>
-  <div id="success-message">✅ Спасибо! Анкета отправлена.</div>
-</div>
+      <button type="submit">Отправить анкету</button>
+    </form>
 
-<script>
-  // Элементы
-  const daySel   = document.getElementById('dob_day');
-  const monthSel = document.getElementById('dob_month');
-  const yearSel  = document.getElementById('dob_year');
-  const ageInput = document.getElementById('age');
+    <div class="ok"  id="ok">✅ Спасибо! Анкета отправлена.</div>
+    <div class="err" id="err"></div>
+  </div>
 
-  // Помощник для ведущих нулей
-  const pad2 = (n) => String(n).padStart(2, '0');
+  <script>
+    // селекты даты
+    const daySel = document.getElementById('dob_day');
+    const monSel = document.getElementById('dob_month');
+    const yearSel= document.getElementById('dob_year');
+    const ageInp = document.getElementById('age');
 
-  // Заполняем селекты: сначала плейсхолдеры
-  daySel.add(new Option('День', ''));
-  monthSel.add(new Option('Месяц', ''));
-  yearSel.add(new Option('Год', ''));
+    const pad2 = n => String(n).padStart(2,'0');
 
-  // Дни 1..31
-  for (let d = 1; d <= 31; d++) {
-    daySel.add(new Option(d, d));
-  }
+    daySel.add(new Option('День',''));
+    monSel.add(new Option('Месяц',''));
+    yearSel.add(new Option('Год',''));
 
-  // Месяцы
-  const months = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
-  months.forEach((m, i) => monthSel.add(new Option(m, i + 1)));
+    for (let d=1; d<=31; d++) daySel.add(new Option(d,d));
+    ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек']
+      .forEach((m,i)=> monSel.add(new Option(m, i+1)));
+    const Y = new Date().getFullYear();
+    for (let y=Y; y>=1940; y--) yearSel.add(new Option(y,y));
 
-  // Годы от текущего до 1940
-  const thisYear = new Date().getFullYear();
-  for (let y = thisYear; y >= 1940; y--) {
-    yearSel.add(new Option(y, y));
-  }
-
-  // Подсчёт возраста + запись в скрытое поле dob_date
-  function updateAge() {
-    if (!daySel.value || !monthSel.value || !yearSel.value) return;
-
-    const dd = parseInt(daySel.value, 10);
-    const mm = parseInt(monthSel.value, 10);
-    const yy = parseInt(yearSel.value, 10);
-
-    const dob = new Date(yy, mm - 1, dd);
-    const today = new Date();
-
-    let age = today.getFullYear() - dob.getFullYear();
-    const m = today.getMonth() - dob.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-
-    // то, что отправим на бэкенд (одно поле dob_date)
-    ageInput.value = `${pad2(dd)}.${pad2(mm)}.${yy} (возраст: ${age})`;
-  }
-
-  // Считаем при каждом изменении
-  daySel.addEventListener('change', updateAge);
-  monthSel.addEventListener('change', updateAge);
-  yearSel.addEventListener('change', updateAge);
-
-  // Отправка формы на Render
-  document.getElementById('anketaForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // подстрахуемся: если дата выбрана, но возраст ещё не посчитался
-    updateAge();
-
-    const fd = new FormData(e.target);
-
-    // можно показывать лоадер/прятать форму
-    document.querySelector('.container').style.display = 'none';
-
-    const resp = await fetch('https://bot-h16b.onrender.com/submit', {
-      method: 'POST',
-      body: fd
-    });
-
-    if (resp.ok) {
-      document.getElementById('success-message').style.display = 'block';
-    } else {
-      alert('Ошибка при отправке анкеты');
-      document.querySelector('.container').style.display = 'block';
+    function updateAge() {
+      if (!daySel.value || !monSel.value || !yearSel.value) return;
+      const dd = +daySel.value, mm = +monSel.value, yy = +yearSel.value;
+      const dob = new Date(yy, mm-1, dd), now = new Date();
+      let age = now.getFullYear() - yy;
+      const m = now.getMonth() - (mm-1);
+      if (m < 0 || (m === 0 && now.getDate() < dd)) age--;
+      ageInp.value = `${pad2(dd)}.${pad2(mm)}.${yy} (возраст: ${age})`;
     }
-  });
-</script>
+    daySel.onchange = monSel.onchange = yearSel.onchange = updateAge;
 
+    // отправка формы
+    const FORM_URL = "https://bot-h16b.onrender.com/submit"; // <-- твой Render URL
+
+    document.getElementById('anketaForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      updateAge(); // подстраховка
+      const fd = new FormData(e.target);
+
+      const card = document.getElementById('card');
+      const okEl = document.getElementById('ok');
+      const errEl= document.getElementById('err');
+
+      okEl.style.display = 'none';
+      errEl.style.display= 'none';
+
+      try {
+        const resp = await fetch(FORM_URL, { method: 'POST', body: fd });
+        const data = await resp.json().catch(()=> ({}));
+        if (resp.ok && data.ok) {
+          e.target.reset();
+          okEl.style.display = 'block';
+        } else {
+          const msg = (data && (data.error || JSON.stringify(data))) || `HTTP ${resp.status}`;
+          errEl.textContent = `Не удалось отправить: ${msg}`;
+          errEl.style.display = 'block';
+        }
+      } catch (err) {
+        errEl.textContent = `Сеть/браузер: ${err}`;
+        errEl.style.display = 'block';
+      }
+    });
+  </script>
 </body>
 </html>
-
